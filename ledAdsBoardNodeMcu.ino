@@ -2,57 +2,46 @@
 #define DATA_PIN D0
 #define SINGLE_MATRIX_ROWS 16
 #define SINGLE_MATRIX_COLS 16
+#define SINGLE_MATRIX_LEDS (SINGLE_MATRIX_ROWS * SINGLE_MATRIX_COLS)
 #define NUMBER_OF_MATRIX 3
-#define NUM_LEDS (SINGLE_MATRIX_ROWS * SINGLE_MATRIX_COLS * NUMBER_OF_MATRIX)
+#define TOTAL_MATRIX_LEDS (SINGLE_MATRIX_ROWS * SINGLE_MATRIX_COLS * NUMBER_OF_MATRIX)
 
 #define TOTAL_MATRIX_ROWS (SINGLE_MATRIX_ROWS * NUMBER_OF_MATRIX)
-
 #define TOTAL_MATRIX_COLS (SINGLE_MATRIX_COLS * NUMBER_OF_MATRIX)
 
-#define SINGLE_MATRIX_LEDS (SINGLE_MATRIX_ROWS * SINGLE_MATRIX_COLS)
-
 #define ASCII_ROWS 6
-
-
 #include <FastLED.h>
 #include "ascii.h"
+#include "position.h"
+#include "charImage.h"
 
 
+//------------------------------------------VARIABLE DECLARATION----------------------------------------------//
+CRGB leds[TOTAL_MATRIX_LEDS];
+int redValue = 1;
+int greenValue = 1;
+int blueValue = 0;
+int interval = 150;
+int verticalOffset = 3;
 
-struct Position {
-  int row;
-  int col;
-};
 
-struct CharImage {
-  int size;
-  int cols;
-  int offset;  // the offset of each image is depending on all images before the current one;
-  bool* imagePtr;
-};
-
-// Define the array of leds
-CRGB leds[NUM_LEDS];
+//------------------------------------------FUNCTION DECLARATION----------------------------------------------//
 int positionToNumber(int rowIndex, int colIndex);
 void showChar(bool* charBinary, int size);
 
+void showMessage(String str); 
 void ledsOff();
-void test();
 
-int RED_VALUE = 1;
-int GREEN_VALUE = 1;
-int BLUE_VALUE = 0;
-int INTERVAL = 150;
-int VERTICAL_OFFSET = 3;
+
+
 
 void setup() {
 
-  FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);  // GRB ordering is assumed
+  FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, TOTAL_MATRIX_LEDS);  // GRB ordering is assumed
   Serial.begin(115200);
-
   FastLED.clear();
 
-  delay(5000);
+  delay(2000);
   Serial.println("Program start here");
 }
 
@@ -60,18 +49,24 @@ void loop() {
 
   while(!Serial.available()){
 
-    RED_VALUE = random(0, 20);
-    GREEN_VALUE = random(0, 20);
-    BLUE_VALUE = random(0, 20);
+    redValue = random(0, 20);
+    greenValue = random(0, 20);
+    blueValue = random(0, 20);
 
     showMessage("! chris maggie !");
 
   }
 
-  INTERVAL = Serial.parseInt();
+  interval = Serial.parseInt();
 
 
 }
+
+
+
+//------------------------------------------FUNCTION DEFINITION----------------------------------------------//
+
+
 
 void showMessage(String str) {
   str.toLowerCase();
@@ -87,19 +82,15 @@ void showMessage(String str) {
     if (str.charAt(i) == 'a') {
       image->size = sizeof(A);
       image->imagePtr = A;
-
     } else if (str.charAt(i) == 'b') {
       image->size = sizeof(B);
       image->imagePtr = B;
-
     } else if (str.charAt(i) == 'c') {
-
       image->size = sizeof(C);
       image->imagePtr = C;
     } else if (str.charAt(i) == 'd') {
       image->size = sizeof(D);
       image->imagePtr = D;
-
     } else if (str.charAt(i) == 'e') {
       image->size = sizeof(E);
       image->imagePtr = E;
@@ -201,18 +192,18 @@ void showMessage(String str) {
 
         Position pos = indexToPosition(image->size, j);
 
-        int newRow = pos.row + VERTICAL_OFFSET;
+        int newRow = pos.row + verticalOffset;
         int newCol = pos.col + SINGLE_MATRIX_COLS * NUMBER_OF_MATRIX + (image->offset) - step;
 
         if (newRow < 0 || newRow >= TOTAL_MATRIX_ROWS) continue;
         if (newCol < 0 || newCol >= TOTAL_MATRIX_COLS) continue;
 
         int ledNum = positionToNumber(newRow, newCol);
-        leds[ledNum] = CRGB(RED_VALUE, GREEN_VALUE, BLUE_VALUE);
+        leds[ledNum] = CRGB(redValue, greenValue, blueValue);
       }
     }
     FastLED.show();
-    delay(INTERVAL);
+    delay(interval);
     FastLED.clear();
 
     if(Serial.available()) return;
@@ -231,12 +222,6 @@ void showMessage(String str) {
   }
 }
 
-
-
-
-
-
-
 int positionToNumber(int rowIndex, int colIndex) {
   int matrixBlockOffset = colIndex / SINGLE_MATRIX_COLS;
   rowIndex = rowIndex % SINGLE_MATRIX_ROWS;
@@ -250,10 +235,8 @@ int positionToNumber(int rowIndex, int colIndex) {
     ledNum = (SINGLE_MATRIX_ROWS - rowIndex - 1) * SINGLE_MATRIX_ROWS + colIndex;
     ledNum += matrixBlockOffset * SINGLE_MATRIX_LEDS;
   }
-
   return ledNum;
 }
-
 
 // function convert one dimension char array index to a 2 dimension position
 Position indexToPosition(int arraySize, int index) {
