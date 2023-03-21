@@ -32,20 +32,6 @@ void setup() {
   FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, TOTAL_MATRIX_LEDS);  // GRB ordering is assumed
   Serial.begin(115200);
   FastLED.clear();
-
-
-
-
-  textRoller.setRedValue(1);
-  textRoller.setGreenValue(1);
-  textRoller.setBlueValue(0);
-  textRoller.setInterval(50);
-
-  textRoller.setVerticalOffset(4);
-  textRoller.configTextRoller("hello word");
-
-
-
   // configure the image
   textRollerTicker.start();
 }
