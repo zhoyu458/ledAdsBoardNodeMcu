@@ -17,6 +17,7 @@ class TextRoller {
     int verticalOffset;
     int step;
     String message;
+    bool isRandomColor;
 
 
     int totalMessageCols;
@@ -45,6 +46,8 @@ class TextRoller {
 
     // reset function free all the memory in the charImagesList,and set TotalOffsetCols, TotalOffsetCols tpo 0
     void reset();
+
+    void print();
 
 
 };

@@ -3,15 +3,18 @@
 
 #define DEFAULT_INTERVAL 200
 #define DEFAULT_VERTICAL_OFFSET 4
+#define DEFAULT_RED_VALUE 10
+#define DEFAULT_GREEN_VALUE 10
+#define DEFAULT_BLUE_VALUE 0
 
 TextRoller::TextRoller() {
-  this->setRedValue(20);
-  this->setGreenValue(20);
-  this->setBlueValue(0);
+  this->setRedValue(DEFAULT_RED_VALUE);
+  this->setGreenValue(DEFAULT_GREEN_VALUE);
+  this->setBlueValue(DEFAULT_BLUE_VALUE);
   this->setVerticalOffset(DEFAULT_VERTICAL_OFFSET);
   this->setInterval(DEFAULT_INTERVAL);
   this->setMessage("welcome");
-
+  this->isRandomColor = false;
 }
 
 void TextRoller::setRedValue(int v) {
@@ -36,8 +39,8 @@ void TextRoller::setVerticalOffset(int v) {
 
 void TextRoller::setMessage(String str) {
 
-   // if the incoming text is the same as the existing one , no need to configure again
-  if(str.equals(this->message)) return;
+  // if the incoming text is the same as the existing one , no need to configure again
+  if (str.equals(this->message)) return;
 
   // clear up the previous configuration
   this->reset();
@@ -175,7 +178,7 @@ void TextRoller::configTextRoller(String str) {
 
 
   // if the incoming text is the same as the existing one , no need to configure again
-  if(str.equals(this->message)) return;
+  if (str.equals(this->message)) return;
 
   // clear up the previous configuration
   this->reset();
@@ -307,4 +310,38 @@ void TextRoller::reset() {
     ptr = NULL;
   }
   this->charImagesList.clear();
+}
+
+
+void TextRoller::print() {
+  Serial.println("------------------------------------------");
+  Serial.print("red");
+  Serial.println(this->redValue);
+  Serial.print("green");
+  Serial.println(this->greenValue);
+  Serial.print("blue");
+  Serial.println(this->blueValue);
+
+
+  Serial.print("verticalOffset");
+  Serial.println(this->verticalOffset);
+
+  Serial.print("interval");
+  Serial.println(this->interval);
+
+  Serial.print("message");
+  Serial.println(this->message);
+
+
+  Serial.print("TotalMessageCols");
+  Serial.println(this->totalMessageCols);
+
+  Serial.print("setTotalOffsetCols");
+  Serial.println(this->totalOffsetCols);
+
+  Serial.print("step");
+  Serial.println(this->step);
+
+
+
 }
