@@ -27,12 +27,24 @@ void printMessage();
 Ticker printTicker(printMessage, 1000);
 
 //------------ web server variable -----------------//
-const char* ssid = "huawei";
-const char* password = "12345678";
+// const char* ssid = "huawei";
+// const char* password = "12345678";
+
+const char* ssid = "SpectrumSetup-2D";
+const char* password = "bluecrown668";
 const char* MESSAGE_PARAMETER = "message";
 const char* COLOR_PARAMETER = "color";
+const char* BRIGHTNESS_PARAMETER = "brightnessFactor";
+
+
+
+
 
 ESP8266WebServer server(80);
+
+IPAddress ip(192, 168, 1, 133);
+IPAddress gateway(192, 168, 1, 1);
+IPAddress subnet(255, 255, 255, 0);
 
 
 
@@ -58,6 +70,7 @@ void setup() {
   FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, TOTAL_MATRIX_LEDS);  // GRB ordering is assumed
   Serial.begin(115200);
   //----------------------web server configuration here--------------------------//
+  WiFi.config(ip, gateway, subnet);
   WiFi.begin(ssid, password);
 
   // Wait for connection
@@ -84,7 +97,7 @@ void setup() {
   FastLED.clear();
   // configure the image
   textRollerTicker.start();
-  // printTicker.start();
+  printTicker.start();
 }
 
 
@@ -95,8 +108,6 @@ void loop() {
   // printTicker.update();
 
   server.handleClient();
-
-  
 }
 
 
@@ -148,13 +159,13 @@ int calcLedNumFromCharBinaryIndex(int binaryCharArraySize, int index) {
 
 void textRollerHandler() {
 
-  
+
   if (textRoller.step >= textRoller.totalOffsetCols) {
     textRoller.setStep(0);
     if (textRoller.isRandomColor == true) {
-      textRoller.setRedValue(random(0, 50));
-      textRoller.setGreenValue(random(0, 50));
-      textRoller.setBlueValue(random(0, 50));
+      textRoller.setRedValue(random(0, 10));
+      textRoller.setGreenValue(random(0, 10));
+      textRoller.setBlueValue(random(0, 10));
     }
   }
 
@@ -183,13 +194,15 @@ void renderFrame() {
       if (newCol < 0 || newCol >= TOTAL_MATRIX_COLS) continue;
 
       int ledNum = positionToNumber(newRow, newCol);
-      leds[ledNum] = CRGB(textRoller.redValue, textRoller.greenValue, textRoller.blueValue);
+      leds[ledNum] = CRGB(textRoller.redValue * textRoller.brightnessFactor, textRoller.greenValue* textRoller.brightnessFactor, textRoller.blueValue* textRoller.brightnessFactor);
+
     }
   }
-  // FastLED.show();
-  // delay(textRoller.interval);
-  // FastLED.clear();
 }
+// FastLED.show();
+// delay(textRoller.interval);
+// FastLED.clear();
+
 
 String mainPage() {
   String page = "<!DOCTYPE HTML><html><head>";
@@ -219,6 +232,18 @@ String mainPage() {
   page += "</form><br>";
   page += "</form><br>";
 
+
+
+  page += "<form  action = \"/\"  method=\"get\">";
+  page += "Brightness: <input type=\"text\" name=\"";
+  page += BRIGHTNESS_PARAMETER;
+  page += "\">";
+  page += "<input type=\"submit\" value=\"Submit\">";
+  page += "&nbsp current brightness: &nbsp";
+  page += textRoller.brightnessFactor;
+  page += "</form><br>";
+  page += "</form><br>";
+
   // page += "<form  action = \"/\"  method=\"get\">";
   // page += "input3: <input type=\"text\" name=\"input3\">";
   // page += "<input type=\"submit\" value=\"Submit\">";
@@ -231,6 +256,7 @@ String mainPage() {
 void handleRoot() {
 
   String msg = server.arg(MESSAGE_PARAMETER);
+
   if (msg.length() != 0) {
     textRoller.setMessage(msg);
   }
@@ -243,24 +269,45 @@ void handleRoot() {
     textRoller.isRandomColor = false;
 
     if (color.equals("red")) {
-      textRoller.setRedValue(20);
+      textRoller.setRedValue(10);
       textRoller.setGreenValue(0);
       textRoller.setBlueValue(0);
     } else if (color.equals("green")) {
       textRoller.setRedValue(0);
-      textRoller.setGreenValue(20);
+      textRoller.setGreenValue(10);
       textRoller.setBlueValue(0);
     } else if (color.equals("blue")) {
       textRoller.setRedValue(0);
       textRoller.setGreenValue(0);
-      textRoller.setBlueValue(20);
+      textRoller.setBlueValue(10);
     } else {
       textRoller.isRandomColor = true;
     }
   }
+
+  String brightness = server.arg(BRIGHTNESS_PARAMETER);
+  brightness.trim();
+
+
+  if(brightness.length() != 0){
+      bool isStringNumber = true;
+      for(int i = 0 ;i < brightness.length(); i++){
+         if (!isDigit(brightness.charAt(i))){
+           isStringNumber = false;
+           break;
+         }
+      }
+
+      if(isStringNumber){
+        textRoller.setBrightnessFactor(brightness.toInt());
+      }
+      
+  }
+
+
   server.send(200, "text/html", mainPage());  //Send web page
 }
 
-void printMessage(){
+void printMessage() {
   textRoller.print();
 }

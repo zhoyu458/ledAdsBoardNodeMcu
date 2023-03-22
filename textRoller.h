@@ -18,6 +18,8 @@ class TextRoller {
     int step;
     String message;
     bool isRandomColor;
+    int brightnessFactor; 
+    
 
 
     int totalMessageCols;
@@ -39,6 +41,8 @@ class TextRoller {
     void setTotalMessageCols(int v);
     void setTotalOffsetCols(int v);
     void setStep(int v);
+
+    void setBrightnessFactor(int v);
 
   // set message will call configTextRoller function to recalcualte all the paramters
     void setMessage(String str);

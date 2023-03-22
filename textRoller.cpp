@@ -1,11 +1,12 @@
 #include "textRoller.h"
 
 
-#define DEFAULT_INTERVAL 200
+#define DEFAULT_INTERVAL 100
 #define DEFAULT_VERTICAL_OFFSET 4
 #define DEFAULT_RED_VALUE 10
 #define DEFAULT_GREEN_VALUE 10
 #define DEFAULT_BLUE_VALUE 0
+#define DEFAULT_BRIGHTNESS_FACTOR 2
 
 TextRoller::TextRoller() {
   this->setRedValue(DEFAULT_RED_VALUE);
@@ -15,18 +16,19 @@ TextRoller::TextRoller() {
   this->setInterval(DEFAULT_INTERVAL);
   this->setMessage("welcome");
   this->isRandomColor = false;
+  this->brightnessFactor = DEFAULT_BRIGHTNESS_FACTOR;
 }
 
 void TextRoller::setRedValue(int v) {
-  this->redValue = v;
+  this->redValue = v ;
 }
 
 void TextRoller::setGreenValue(int v) {
-  this->greenValue = v;
+  this->greenValue = v ;
 }
 
 void TextRoller::setBlueValue(int v) {
-  this->blueValue = v;
+  this->blueValue = v ;
 }
 
 void TextRoller::setInterval(int v) {
@@ -138,6 +140,39 @@ void TextRoller::setMessage(String str) {
     } else if (str.charAt(i) == '!') {
       image->size = sizeof(HEART);
       image->imagePtr = HEART;
+    } else if (str.charAt(i) == '0') {
+      image->size = sizeof(ZERO);
+      image->imagePtr = ZERO;
+    } else if (str.charAt(i) == '1') {
+      image->size = sizeof(ONE);
+      image->imagePtr = ONE;
+    } else if (str.charAt(i) == '2') {
+      image->size = sizeof(TWO);
+      image->imagePtr = TWO;
+    } else if (str.charAt(i) == '3') {
+      image->size = sizeof(THREE);
+      image->imagePtr = THREE;
+    } else if (str.charAt(i) == '4') {
+      image->size = sizeof(FOUR);
+      image->imagePtr = FOUR;
+    } else if (str.charAt(i) == '5') {
+      image->size = sizeof(FIVE);
+      image->imagePtr = FIVE;
+    } else if (str.charAt(i) == '6') {
+      image->size = sizeof(SIX);
+      image->imagePtr = SIX;
+    } else if (str.charAt(i) == '7') {
+      image->size = sizeof(SEVEN);
+      image->imagePtr = SEVEN;
+    } else if (str.charAt(i) == '8') {
+      image->size = sizeof(EIGHT);
+      image->imagePtr = EIGHT;
+    } else if (str.charAt(i) == '9') {
+      image->size = sizeof(NINE);
+      image->imagePtr = NINE;
+    } else if (str.charAt(i) == ':') {
+      image->size = sizeof(COLON);
+      image->imagePtr = COLON;
     }
 
     image->cols = (image->size) / ASCII_ROWS;
@@ -159,7 +194,13 @@ void TextRoller::setMessage(String str) {
   }
 }
 
-
+void TextRoller::setBrightnessFactor(int v) {
+  if (v < 0 || v > 10) {
+    this->brightnessFactor = DEFAULT_BRIGHTNESS_FACTOR;
+  } else {
+    this->brightnessFactor = v;
+  }
+}
 
 void TextRoller::setTotalMessageCols(int v) {
   this->totalMessageCols = v;
@@ -188,6 +229,8 @@ void TextRoller::configTextRoller(String str) {
   int length = str.length();
 
   this->message = str;
+
+  Serial.println(str);
 
   //declare an array of pointer, each pointer is pointing to an array
   for (int i = 0; i < length; i++) {
@@ -276,8 +319,40 @@ void TextRoller::configTextRoller(String str) {
     } else if (str.charAt(i) == '!') {
       image->size = sizeof(HEART);
       image->imagePtr = HEART;
+    } else if (str.charAt(i) == '0') {
+      image->size = sizeof(ZERO);
+      image->imagePtr = ZERO;
+    } else if (str.charAt(i) == '1') {
+      image->size = sizeof(ONE);
+      image->imagePtr = ONE;
+    } else if (str.charAt(i) == '2') {
+      image->size = sizeof(TWO);
+      image->imagePtr = TWO;
+    } else if (str.charAt(i) == '3') {
+      image->size = sizeof(THREE);
+      image->imagePtr = THREE;
+    } else if (str.charAt(i) == '4') {
+      image->size = sizeof(FOUR);
+      image->imagePtr = FOUR;
+    } else if (str.charAt(i) == '5') {
+      image->size = sizeof(FIVE);
+      image->imagePtr = FIVE;
+    } else if (str.charAt(i) == '6') {
+      image->size = sizeof(SIX);
+      image->imagePtr = SIX;
+    } else if (str.charAt(i) == '7') {
+      image->size = sizeof(SEVEN);
+      image->imagePtr = SEVEN;
+    } else if (str.charAt(i) == '8') {
+      image->size = sizeof(EIGHT);
+      image->imagePtr = EIGHT;
+    } else if (str.charAt(i) == '9') {
+      image->size = sizeof(NINE);
+      image->imagePtr = NINE;
+    } else if (str.charAt(i) == ':') {
+      image->size = sizeof(COLON);
+      image->imagePtr = COLON;
     }
-
     image->cols = (image->size) / ASCII_ROWS;
 
     this->totalMessageCols += image->cols;
@@ -315,33 +390,30 @@ void TextRoller::reset() {
 
 void TextRoller::print() {
   Serial.println("------------------------------------------");
-  Serial.print("red");
+  Serial.print("red: ");
   Serial.println(this->redValue);
-  Serial.print("green");
+  Serial.print("green: ");
   Serial.println(this->greenValue);
-  Serial.print("blue");
+  Serial.print("blue: ");
   Serial.println(this->blueValue);
 
 
-  Serial.print("verticalOffset");
+  Serial.print("verticalOffset: ");
   Serial.println(this->verticalOffset);
 
-  Serial.print("interval");
+  Serial.print("interval: ");
   Serial.println(this->interval);
 
-  Serial.print("message");
+  Serial.print("message: ");
   Serial.println(this->message);
 
 
-  Serial.print("TotalMessageCols");
+  Serial.print("TotalMessageCols: ");
   Serial.println(this->totalMessageCols);
 
-  Serial.print("setTotalOffsetCols");
+  Serial.print("setTotalOffsetCols: ");
   Serial.println(this->totalOffsetCols);
 
-  Serial.print("step");
+  Serial.print("step: ");
   Serial.println(this->step);
-
-
-
 }
