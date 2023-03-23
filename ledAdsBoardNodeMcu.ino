@@ -52,6 +52,7 @@ IPAddress subnet(255, 255, 255, 0);
 //------------------------------------------FUNCTION DECLARATION----------------------------------------------//
 int positionToNumber(int rowIndex, int colIndex);
 String mainPage();
+String mainPageWithCss();
 
 void handleRoot();
 
@@ -194,8 +195,7 @@ void renderFrame() {
       if (newCol < 0 || newCol >= TOTAL_MATRIX_COLS) continue;
 
       int ledNum = positionToNumber(newRow, newCol);
-      leds[ledNum] = CRGB(textRoller.redValue * textRoller.brightnessFactor, textRoller.greenValue* textRoller.brightnessFactor, textRoller.blueValue* textRoller.brightnessFactor);
-
+      leds[ledNum] = CRGB(textRoller.redValue * textRoller.brightnessFactor, textRoller.greenValue * textRoller.brightnessFactor, textRoller.blueValue * textRoller.brightnessFactor);
     }
   }
 }
@@ -253,6 +253,119 @@ String mainPage() {
   return page;
 }
 
+String mainPageWithCss() {
+  String page = "<!DOCTYPE HTML><html><head>";
+  page += "<title>Nail Noble Spa Pubish Board</title>";
+  page += "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">";
+
+
+  page += "<style>";
+  page += "body {background-color: rgb(138, 188, 213);height: 100vh;}";
+  page += ".center-wrapper {display: flex;justify-content: center;}";
+  page += ".container {width: 100vw;height: 100vh;}";
+
+
+  page += ".top {text-align: center;font-family: sans-serif;font-size: xx-large;font-style: italic;padding: 1rem;color: rgb(183, 53, 222);font-weight: bolder;}";
+  page += ".body {padding-top: 2rem;}";
+  page += ".input-box-wrapper {margin-bottom: 1rem;}";
+  page += ".input-box-wrapper input {display: block;box-sizing: border-box;padding-left: 0.3rem;margin: 0;border: 0.2rem solid purple;height: 2rem;width: 90vw;background-color: gainsboro;color: rgb(14, 93, 238);}";
+  page += ".submit-button-wrapper {margin-top: 1 rem; margin-bottom: 1rem;width: 90vw;}";
+  page += ".submit-button-wrapper input {display:block; height: 3rem; border-radius: 10px;border: 2px solid purple; ";
+  page += "color:black}";
+  page += ".footer {background-color: #bfa;}";
+  page += "</style> </head>";
+
+
+
+  page += "<body>";
+  page += "<div class=\"container\">";
+  page += "<div class=\"top\">Nail Noble Spa Publishing System</div>";
+  page += "<div class=\"display-content-wrapper\">";
+  
+  page += "<form action=""><div class=\"center-wrapper\">";
+  page +="<div class=\"input-box-wrapper\"><input name = \"";
+  page += MESSAGE_PARAMETER;  
+  page += "\" type=\"text\" placeholder=\"";
+  page += textRoller.message;
+  page +=  "\"></div></div>";
+  page += "<div class=\"center-wrapper\"><div class=\"submit-button-wrapper\"><input type=\"submit\"></div></div></form>";
+
+
+    page += "<form action=""><div class=\"center-wrapper\">";
+  page +="<div class=\"input-box-wrapper\"><input name = \"";
+  page += COLOR_PARAMETER;  
+  page += "\" type=\"text\" placeholder=\"";
+  page += "enter your color here";
+  page +=  "\"></div></div>";
+  page += "<div class=\"center-wrapper\"><div class=\"submit-button-wrapper\"><input type=\"submit\"></div></div></form>";
+
+
+  page += "<form action=""><div class=\"center-wrapper\">";
+  page +="<div class=\"input-box-wrapper\"><input name = \"";
+  page += BRIGHTNESS_PARAMETER;  
+  page += "\" type=\"text\" placeholder=\"";
+  page += textRoller.brightnessFactor;
+  page +=  "\"></div></div>";
+  page += "<div class=\"center-wrapper\"><div class=\"submit-button-wrapper\"><input type=\"submit\"></div></div></form>";
+
+
+  
+
+
+
+
+
+  page +="</div>";
+  page +="</div>";
+  page +="</div>";
+  page +="</body>";
+  page +="</html>";
+
+
+
+
+
+
+
+
+  // // Message Form to update message
+  // page += "<form  action = \"/\"  method=\"get\">";
+  // page += "Message: <input type=\"text\" name=\"";
+  // page += MESSAGE_PARAMETER;
+  // page += "\">";
+  // page += "<input type=\"submit\" value=\"Submit\">";
+  // page += "&nbsp current message: &nbsp";
+  // page += textRoller.message;
+  // page += "</form><br>";
+
+  // // Colof Form to update color
+  // page += "<form  action = \"/\"  method=\"get\">";
+  // page += "Color: <input type=\"text\" name=\"";
+  // page += COLOR_PARAMETER;
+  // page += "\">";
+  // page += "<input type=\"submit\" value=\"Submit\">";
+  // page += "&nbsp current Color: &nbsp";
+  // page += "Color Place holder";
+  // page += "</form><br>";
+  // page += "</form><br>";
+
+
+
+  // page += "<form  action = \"/\"  method=\"get\">";
+  // page += "Brightness: <input type=\"text\" name=\"";
+  // page += BRIGHTNESS_PARAMETER;
+  // page += "\">";
+  // page += "<input type=\"submit\" value=\"Submit\">";
+  // page += "&nbsp current brightness: &nbsp";
+  // page += textRoller.brightnessFactor;
+  // page += "</form><br>";
+  // page += "</form><br>";
+
+
+
+  return page;
+}
+
 void handleRoot() {
 
   String msg = server.arg(MESSAGE_PARAMETER);
@@ -289,23 +402,22 @@ void handleRoot() {
   brightness.trim();
 
 
-  if(brightness.length() != 0){
-      bool isStringNumber = true;
-      for(int i = 0 ;i < brightness.length(); i++){
-         if (!isDigit(brightness.charAt(i))){
-           isStringNumber = false;
-           break;
-         }
+  if (brightness.length() != 0) {
+    bool isStringNumber = true;
+    for (int i = 0; i < brightness.length(); i++) {
+      if (!isDigit(brightness.charAt(i))) {
+        isStringNumber = false;
+        break;
       }
+    }
 
-      if(isStringNumber){
-        textRoller.setBrightnessFactor(brightness.toInt());
-      }
-      
+    if (isStringNumber) {
+      textRoller.setBrightnessFactor(brightness.toInt());
+    }
   }
 
 
-  server.send(200, "text/html", mainPage());  //Send web page
+  server.send(200, "text/html", mainPageWithCss());  //Send web page
 }
 
 void printMessage() {
