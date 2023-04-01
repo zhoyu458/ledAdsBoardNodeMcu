@@ -2,15 +2,15 @@
 
 
 #define DEFAULT_INTERVAL 100
-#define DEFAULT_VERTICAL_OFFSET 4
-#define DEFAULT_RED_VALUE 10
-#define DEFAULT_GREEN_VALUE 10
-#define DEFAULT_BLUE_VALUE 0
-#define DEFAULT_BRIGHTNESS_FACTOR 2
+#define DEFAULT_VERTICAL_OFFSET 5
+#define DEFAULT_RED_VALUE 25
+#define DEFAULT_GREEN_VALUE 25
+#define DEFAULT_BLUE_VALUE 25
+#define DEFAULT_BRIGHTNESS_FACTOR 5
 
 TextRoller::TextRoller() {
   this->setRedValue(DEFAULT_RED_VALUE);
-  this->setGreenValue(DEFAULT_GREEN_VALUE);
+  this->setGreenValue(0);
   this->setBlueValue(DEFAULT_BLUE_VALUE);
   this->setVerticalOffset(DEFAULT_VERTICAL_OFFSET);
   this->setInterval(DEFAULT_INTERVAL);
@@ -83,9 +83,9 @@ void TextRoller::setMessage(String str) {
     } else if (str.charAt(i) == 'i') {
       image->size = sizeof(I);
       image->imagePtr = I;
-    } else if (str.charAt(i) == 'g') {
-      image->size = sizeof(G);
-      image->imagePtr = G;
+    } else if (str.charAt(i) == 'j') {
+      image->size = sizeof(J);
+      image->imagePtr = J;
     } else if (str.charAt(i) == 'k') {
       image->size = sizeof(K);
       image->imagePtr = K;
@@ -386,7 +386,6 @@ void TextRoller::reset() {
   }
   this->charImagesList.clear();
 }
-
 
 void TextRoller::print() {
   Serial.println("------------------------------------------");

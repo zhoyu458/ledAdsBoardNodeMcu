@@ -11,11 +11,14 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
+#include <Preferences.h>
 
 
 
 
 //------------------------------------------VARIABLE DECLARATION----------------------------------------------//
+Preferences staticStorageMap;
+
 CRGB leds[TOTAL_MATRIX_LEDS];
 TextRoller textRoller;
 
@@ -50,11 +53,12 @@ IPAddress subnet(255, 255, 255, 0);
 
 
 //------------------------------------------FUNCTION DECLARATION----------------------------------------------//
+void loadDataFromStaticStorageMap();
 int positionToNumber(int rowIndex, int colIndex);
 String mainPage();
 String mainPageWithCss();
 
-void handleRoot();
+void handleWebRequest();
 
 void handleNotFound() {
 
@@ -74,6 +78,7 @@ void setup() {
   WiFi.config(ip, gateway, subnet);
   WiFi.begin(ssid, password);
 
+
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -89,25 +94,37 @@ void setup() {
     Serial.println("MDNS responder started");
   }
 
-  server.on("/", handleRoot);
+  server.on("/", handleWebRequest);
   server.onNotFound(handleNotFound);
   server.begin();
   Serial.println("HTTP server started");
 
 
   FastLED.clear();
-  // configure the image
+  staticStorageMap.begin(PREFERENCE_NAME_SPACE);
   textRollerTicker.start();
   printTicker.start();
+
+  loadDataFromStaticStorageMap();
 }
 
 
 
 void loop() {
-  textRollerTicker.update();
+
+  productionRun();
 
   // printTicker.update();
 
+
+  // test();
+}
+
+
+
+// mainRun is the production code
+void productionRun() {
+  textRollerTicker.update();
   server.handleClient();
 }
 
@@ -281,45 +298,48 @@ String mainPageWithCss() {
   page += "<div class=\"container\">";
   page += "<div class=\"top\">Nail Noble Spa Publishing System</div>";
   page += "<div class=\"display-content-wrapper\">";
-  
-  page += "<form action=""><div class=\"center-wrapper\">";
-  page +="<div class=\"input-box-wrapper\"><input name = \"";
-  page += MESSAGE_PARAMETER;  
+
+  page += "<form action="
+          "><div class=\"center-wrapper\">";
+  page += "<div class=\"input-box-wrapper\"><input name = \"";
+  page += MESSAGE_PARAMETER;
   page += "\" type=\"text\" placeholder=\"";
   page += textRoller.message;
-  page +=  "\"></div></div>";
+  page += "\"></div></div>";
   page += "<div class=\"center-wrapper\"><div class=\"submit-button-wrapper\"><input type=\"submit\"></div></div></form>";
 
 
-    page += "<form action=""><div class=\"center-wrapper\">";
-  page +="<div class=\"input-box-wrapper\"><input name = \"";
-  page += COLOR_PARAMETER;  
+  page += "<form action="
+          "><div class=\"center-wrapper\">";
+  page += "<div class=\"input-box-wrapper\"><input name = \"";
+  page += COLOR_PARAMETER;
   page += "\" type=\"text\" placeholder=\"";
   page += "enter your color here";
-  page +=  "\"></div></div>";
+  page += "\"></div></div>";
   page += "<div class=\"center-wrapper\"><div class=\"submit-button-wrapper\"><input type=\"submit\"></div></div></form>";
 
 
-  page += "<form action=""><div class=\"center-wrapper\">";
-  page +="<div class=\"input-box-wrapper\"><input name = \"";
-  page += BRIGHTNESS_PARAMETER;  
+  page += "<form action="
+          "><div class=\"center-wrapper\">";
+  page += "<div class=\"input-box-wrapper\"><input name = \"";
+  page += BRIGHTNESS_PARAMETER;
   page += "\" type=\"text\" placeholder=\"";
   page += textRoller.brightnessFactor;
-  page +=  "\"></div></div>";
+  page += "\"></div></div>";
   page += "<div class=\"center-wrapper\"><div class=\"submit-button-wrapper\"><input type=\"submit\"></div></div></form>";
 
 
-  
 
 
 
 
 
-  page +="</div>";
-  page +="</div>";
-  page +="</div>";
-  page +="</body>";
-  page +="</html>";
+
+  page += "</div>";
+  page += "</div>";
+  page += "</div>";
+  page += "</body>";
+  page += "</html>";
 
 
 
@@ -366,12 +386,13 @@ String mainPageWithCss() {
   return page;
 }
 
-void handleRoot() {
+void handleWebRequest() {
 
   String msg = server.arg(MESSAGE_PARAMETER);
 
   if (msg.length() != 0) {
     textRoller.setMessage(msg);
+    saveMessageToStaticStoragemap(msg);
   }
 
   String color = server.arg(COLOR_PARAMETER);
@@ -423,3 +444,28 @@ void handleRoot() {
 void printMessage() {
   textRoller.print();
 }
+
+void test() {
+  for (int i = 0; i < 256; i++) {
+    leds[i] = CRGB(1, 0, 0);
+    FastLED.show();
+    delay(1);
+  }
+  FastLED.clear();
+  delay(100);
+}
+
+void loadDataFromStaticStorageMap(){
+    String s= staticStorageMap.getString(TEXT_ROLLER_MESSAGE_KEY,TEXT_ROLLER_MESSAGE_VALUE);
+    textRoller.setMessage(s);
+}
+
+void saveMessageToStaticStoragemap(String msg){
+      if(msg.length() == 0) return;
+     staticStorageMap.putString(TEXT_ROLLER_MESSAGE_KEY, msg);
+}
+
+
+
+
+
