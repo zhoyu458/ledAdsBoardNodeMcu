@@ -33,8 +33,13 @@ Ticker printTicker(printMessage, 1000);
 // const char* ssid = "huawei";
 // const char* password = "12345678";
 
-const char* ssid = "SpectrumSetup-2D";
-const char* password = "bluecrown668";
+// const char* ssid = "SpectrumSetup-2D";
+// const char* password = "bluecrown668";
+
+const char* ssid = "NobleSpa";
+const char* password = "20134208888";
+
+
 const char* MESSAGE_PARAMETER = "message";
 const char* COLOR_PARAMETER = "color";
 const char* BRIGHTNESS_PARAMETER = "brightnessFactor";
@@ -44,8 +49,13 @@ const char* BRIGHTNESS_PARAMETER = "brightnessFactor";
 
 
 ESP8266WebServer server(80);
+// below is the configuration for home test
+// IPAddress ip(192, 168, 1, 133);
+// IPAddress gateway(192, 168, 1, 1);
+// IPAddress subnet(255, 255, 255, 0);
 
-IPAddress ip(192, 168, 1, 133);
+// below is the configuration for nail noble spa
+IPAddress ip(192, 168, 1, 237);
 IPAddress gateway(192, 168, 1, 1);
 IPAddress subnet(255, 255, 255, 0);
 

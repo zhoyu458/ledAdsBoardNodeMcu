@@ -3,14 +3,14 @@
 
 #define DEFAULT_INTERVAL 100
 #define DEFAULT_VERTICAL_OFFSET 5
-#define DEFAULT_RED_VALUE 25
-#define DEFAULT_GREEN_VALUE 25
-#define DEFAULT_BLUE_VALUE 25
-#define DEFAULT_BRIGHTNESS_FACTOR 5
+#define DEFAULT_RED_VALUE 255
+#define DEFAULT_GREEN_VALUE 0
+#define DEFAULT_BLUE_VALUE 127
+#define DEFAULT_BRIGHTNESS_FACTOR 1
 
 TextRoller::TextRoller() {
   this->setRedValue(DEFAULT_RED_VALUE);
-  this->setGreenValue(0);
+  this->setGreenValue(DEFAULT_GREEN_VALUE);
   this->setBlueValue(DEFAULT_BLUE_VALUE);
   this->setVerticalOffset(DEFAULT_VERTICAL_OFFSET);
   this->setInterval(DEFAULT_INTERVAL);
