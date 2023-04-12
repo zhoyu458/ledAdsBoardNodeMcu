@@ -309,8 +309,8 @@ String mainPageWithCss() {
   page += "<div class=\"top\">Nail Noble Spa Publishing System</div>";
   page += "<div class=\"display-content-wrapper\">";
 
-  page += "<form action="
-          "><div class=\"center-wrapper\">";
+  page += "<form  action = \"/\"  method=\"post\">";
+  page += "<div class=\"center-wrapper\">";
   page += "<div class=\"input-box-wrapper\"><input name = \"";
   page += MESSAGE_PARAMETER;
   page += "\" type=\"text\" placeholder=\"";
@@ -319,8 +319,8 @@ String mainPageWithCss() {
   page += "<div class=\"center-wrapper\"><div class=\"submit-button-wrapper\"><input type=\"submit\"></div></div></form>";
 
 
-  page += "<form action="
-          "><div class=\"center-wrapper\">";
+  page += "<form  action = \"/\"  method=\"post\">";
+  page += "<div class=\"center-wrapper\">";
   page += "<div class=\"input-box-wrapper\"><input name = \"";
   page += COLOR_PARAMETER;
   page += "\" type=\"text\" placeholder=\"";
@@ -329,12 +329,14 @@ String mainPageWithCss() {
   page += "<div class=\"center-wrapper\"><div class=\"submit-button-wrapper\"><input type=\"submit\"></div></div></form>";
 
 
-  page += "<form action="
-          "><div class=\"center-wrapper\">";
+
+
+  page += "<form  action = \"/\"  method=\"post\">";
+  page += "<div class=\"center-wrapper\">";
   page += "<div class=\"input-box-wrapper\"><input name = \"";
   page += BRIGHTNESS_PARAMETER;
   page += "\" type=\"text\" placeholder=\"";
-  page += textRoller.brightnessFactor;
+  page += String(textRoller.brightnessFactor);
   page += "\"></div></div>";
   page += "<div class=\"center-wrapper\"><div class=\"submit-button-wrapper\"><input type=\"submit\"></div></div></form>";
 
@@ -413,17 +415,17 @@ void handleWebRequest() {
     textRoller.isRandomColor = false;
 
     if (color.equals("red")) {
-      textRoller.setRedValue(10);
+      textRoller.setRedValue(20);
       textRoller.setGreenValue(0);
       textRoller.setBlueValue(0);
     } else if (color.equals("green")) {
       textRoller.setRedValue(0);
-      textRoller.setGreenValue(10);
+      textRoller.setGreenValue(20);
       textRoller.setBlueValue(0);
     } else if (color.equals("blue")) {
       textRoller.setRedValue(0);
       textRoller.setGreenValue(0);
-      textRoller.setBlueValue(10);
+      textRoller.setBlueValue(20);
     } else {
       textRoller.isRandomColor = true;
     }
@@ -431,6 +433,7 @@ void handleWebRequest() {
 
   String brightness = server.arg(BRIGHTNESS_PARAMETER);
   brightness.trim();
+
 
 
   if (brightness.length() != 0) {
